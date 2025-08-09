@@ -48,7 +48,17 @@
             background-clip: text;
             -webkit-text-fill-color: transparent;
         }
-        
+        a{
+            text-decoration: none;
+            color: #000;
+            text-shadow: #bbbbbb;
+            text-shadow: 0 0 10px rgba(108, 198, 192, 0.3);
+        }
+        a:hover{
+            text-decoration: underline;
+            color: #76ff03;
+            text-shadow: 0 0 10px rgba(118, 255, 3, 0.3);
+        }
         .subtitle {
             font-size: 1.4rem;
             max-width: 900px;
@@ -610,7 +620,7 @@
         </main>
         
         <footer>
-            <p>Enhanced Digital Modulation Simulator | ECE Education Tool | &copy; 2023</p>
+            <p>Enhanced Digital Modulation Simulator | Developed by <a href="https://www.linkedin.com/in/venkata-dinesh-reddy-p" >Dinesh Reddy</a> | &copy; 2025</p>
             <p>Designed for Electronics and Communication Engineering students</p>
         </footer>
     </div>
@@ -969,19 +979,12 @@
             // Initialize with default waveform
             generateWaveform();
             
-            // Set up event listeners
+            // Set up event listeners - only run simulation when button is clicked
             simulateBtn.addEventListener('click', generateWaveform);
-            freqSlider.addEventListener('change', generateWaveform);
-            ampSlider.addEventListener('change', generateWaveform);
-            bitrateSlider.addEventListener('change', generateWaveform);
-            freqDevSlider.addEventListener('change', generateWaveform);
-            modTypeSelect.addEventListener('change', generateWaveform);
-            dataInput.addEventListener('change', generateWaveform);
             
-            // Random binary button
+            // Random binary button - updates input but doesn't run simulation automatically
             randomBtn.addEventListener('click', function() {
                 dataInput.value = generateRandomBinary(8);
-                generateWaveform();
             });
             
             // Resize canvases when window resizes
