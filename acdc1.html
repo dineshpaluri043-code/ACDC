@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced Digital Modulation Simulator</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0c1b2a, #1a2238);
+            min-height: 100vh;
+            padding: 20px;
+            color: white;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            padding: 25px;
+            margin-bottom: 30px;
+            background: rgba(15, 30, 55, 0.8);
+            border-radius: 15px;
+            border-bottom: 3px solid #4fc3f7;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+        }
+        
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            color: #ffd700;
+            text-shadow: 0 0 15px rgba(255, 215, 0, 0.7);
+            background: linear-gradient(to right, #ffd700, #ffa500);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .subtitle {
+            font-size: 1.4rem;
+            max-width: 900px;
+            margin: 0 auto 20px;
+            line-height: 1.6;
+            color: #bbbbff;
+        }
+        
+        .card {
+            background: rgba(15, 30, 55, 0.7);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(79, 195, 247, 0.3);
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.4);
+            transition: transform 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5);
+        }
+        
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid rgba(79, 195, 247, 0.4);
+        }
+        
+        .card-header i {
+            font-size: 2.2rem;
+            margin-right: 20px;
+            color: #4fc3f7;
+            background: rgba(79, 195, 247, 0.15);
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .card-header h2 {
+            color: #4fc3f7;
+            font-size: 2.2rem;
+            text-shadow: 0 0 15px rgba(79, 195, 247, 0.4);
+        }
+        
+        .controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .control-group {
+            background: rgba(25, 45, 75, 0.6);
+            border-radius: 12px;
+            padding: 25px;
+            border: 1px solid rgba(79, 195, 247, 0.3);
+            box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .control-group h3 {
+            margin-bottom: 20px;
+            color: #76ff03;
+            display: flex;
+            align-items: center;
+            font-size: 1.5rem;
+            text-shadow: 0 0 10px rgba(118, 255, 3, 0.3);
+        }
+        
+        .control-group h3 i {
+            margin-right: 12px;
+            font-size: 1.4rem;
+        }
+        
+        .slider-container {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: rgba(0, 10, 25, 0.5);
+            border-radius: 10px;
+            box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.4);
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #e0e0e0;
+            font-size: 1.1rem;
+        }
+        
+        input[type="range"] {
+            width: 100%;
+            height: 10px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 5px;
+            outline: none;
+            -webkit-appearance: none;
+        }
+        
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 24px;
+            height: 24px;
+            background: #4fc3f7;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 15px rgba(79, 195, 247, 0.8);
+            border: 2px solid white;
+        }
+        
+        select, button, input[type="text"] {
+            width: 100%;
+            padding: 14px;
+            background: rgba(79, 195, 247, 0.2);
+            border: 2px solid #4fc3f7;
+            border-radius: 10px;
+            color: white;
+            font-size: 1.1rem;
+            margin-bottom: 18px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        select:hover, select:focus, input[type="text"]:focus {
+            background: rgba(79, 195, 247, 0.3);
+            outline: none;
+            box-shadow: 0 0 15px rgba(79, 195, 247, 0.4);
+        }
+        
+        button {
+            background: linear-gradient(to right, #4fc3f7, #2196f3);
+            border: none;
+            font-weight: bold;
+            font-size: 1.2rem;
+            padding: 16px;
+            margin-top: 15px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(33, 150, 243, 0.4);
+            transition: all 0.3s ease;
+        }
+        
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(33, 150, 243, 0.6);
+            background: linear-gradient(to right, #29b6f6, #0288d1);
+        }
+        
+        .wave-container {
+            position: relative;
+            height: 350px;
+            background: rgba(10, 20, 40, 0.6);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid rgba(79, 195, 247, 0.25);
+            margin-bottom: 30px;
+        }
+        
+        .comparison-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(600px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+        
+        .comparison-card {
+            background: rgba(20, 35, 65, 0.7);
+            border-radius: 15px;
+            padding: 25px;
+            border: 2px solid rgba(79, 195, 247, 0.3);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+            transition: all 0.3s ease;
+        }
+        
+        .comparison-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5);
+        }
+        
+        .comparison-card h3 {
+            color: #ffd700;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            font-size: 1.6rem;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+        }
+        
+        .comparison-card h3 i {
+            margin-right: 15px;
+            font-size: 1.6rem;
+            color: #4fc3f7;
+        }
+        
+        .signal-pair {
+            display: flex;
+            flex-direction: column;
+            height: 350px;
+            background: rgba(10, 20, 40, 0.6);
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+        
+        .signal-container {
+            flex: 1;
+            position: relative;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.15);
+        }
+        
+        .signal-container:last-child {
+            border-bottom: none;
+        }
+        
+        .signal-label {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            font-size: 1.1rem;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 6px 12px;
+            border-radius: 6px;
+            z-index: 10;
+            font-weight: 600;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.4);
+        }
+        
+        .signal-container canvas {
+            width: 100%;
+            height: 100%;
+        }
+        
+        .modulation-types {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+        
+        .mod-type {
+            background: rgba(25, 45, 75, 0.6);
+            border-radius: 12px;
+            padding: 25px;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(79, 195, 247, 0.3);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .mod-type:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.4);
+        }
+        
+        .mod-type h3 {
+            color: #ffd700;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            font-size: 1.5rem;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+        }
+        
+        .mod-type h3 i {
+            margin-right: 15px;
+            font-size: 1.6rem;
+        }
+        
+        .mod-type p {
+            line-height: 1.7;
+            color: #e0e0e0;
+            font-size: 1.05rem;
+            margin-bottom: 15px;
+        }
+        
+        .modulation-formula {
+            background: rgba(0, 0, 0, 0.4);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 1.1rem;
+            color: #76ff03;
+            text-align: center;
+            text-shadow: 0 0 8px rgba(118, 255, 3, 0.3);
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+        
+        footer {
+            text-align: center;
+            padding: 30px 0;
+            margin-top: 30px;
+            color: #bbbbbb;
+            font-size: 1rem;
+            border-top: 2px solid rgba(255, 255, 255, 0.15);
+        }
+        
+        .info-panel {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+        
+        .info-box {
+            background: rgba(25, 45, 75, 0.6);
+            border-radius: 12px;
+            padding: 25px;
+            border-left: 5px solid #4fc3f7;
+            transition: transform 0.3s ease;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .info-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.4);
+        }
+        
+        .info-box h3 {
+            color: #76ff03;
+            margin-bottom: 15px;
+            font-size: 1.4rem;
+            display: flex;
+            align-items: center;
+            text-shadow: 0 0 8px rgba(118, 255, 3, 0.3);
+        }
+        
+        .info-box h3 i {
+            margin-right: 15px;
+            font-size: 1.5rem;
+        }
+        
+        .info-box p {
+            line-height: 1.7;
+            color: #e0e0e0;
+            font-size: 1.05rem;
+        }
+        
+        .highlight {
+            color: #ffd700;
+            font-weight: bold;
+            text-shadow: 0 0 8px rgba(255, 215, 0, 0.3);
+        }
+        
+        .btn-group {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .btn-group button {
+            flex: 1;
+        }
+        
+        @media (max-width: 768px) {
+            .controls {
+                grid-template-columns: 1fr;
+            }
+            .wave-container {
+                height: 300px;
+            }
+            .comparison-section {
+                grid-template-columns: 1fr;
+            }
+            .comparison-card {
+                min-width: 100%;
+            }
+            .signal-pair {
+                height: 300px;
+            }
+            h1 {
+                font-size: 2.2rem;
+            }
+            .card-header h2 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-satellite"></i> Enhanced Digital Modulation Simulator</h1>
+            <p class="subtitle">Visualize ASK, FSK, PSK, BASK, BFSK, and BPSK modulation with clear signal visibility</p>
+        </header>
+        
+        <main>
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-sliders-h"></i>
+                    <h2>Simulation Controls</h2>
+                </div>
+                
+                <div class="controls">
+                    <div class="control-group">
+                        <h3><i class="fas fa-wave-square"></i> Modulation Parameters</h3>
+                        <div class="slider-container">
+                            <label for="frequency">Carrier Frequency: <span id="freqValue">1 kHz</span></label>
+                            <input type="range" id="frequency" min="0.5" max="3" step="0.1" value="1">
+                        </div>
+                        
+                        <div class="slider-container">
+                            <label for="amplitude">Signal Amplitude: <span id="ampValue">1.0 V</span></label>
+                            <input type="range" id="amplitude" min="0.1" max="2" step="0.1" value="1">
+                        </div>
+                        
+                        <div class="slider-container">
+                            <label for="bitrate">Bit Rate: <span id="bitrateValue">1 kbps</span></label>
+                            <input type="range" id="bitrate" min="0.5" max="5" step="0.1" value="1">
+                        </div>
+                        
+                        <div class="slider-container">
+                            <label for="freqDev">Frequency Deviation (FSK/BFSK): <span id="devValue">0.3 kHz</span></label>
+                            <input type="range" id="freqDev" min="0.1" max="1" step="0.1" value="0.3">
+                        </div>
+                    </div>
+                    
+                    <div class="control-group">
+                        <h3><i class="fas fa-cog"></i> Configuration</h3>
+                        <label for="modType">Modulation Type</label>
+                        <select id="modType">
+                            <option value="ask">Amplitude Shift Keying (ASK)</option>
+                            <option value="fsk">Frequency Shift Keying (FSK)</option>
+                            <option value="psk">Phase Shift Keying (PSK)</option>
+                            <option value="bask">Binary ASK (BASK)</option>
+                            <option value="bfsk">Binary FSK (BFSK)</option>
+                            <option value="bpsk">Binary PSK (BPSK)</option>
+                        </select>
+                        
+                        <label for="dataInput">Binary Input</label>
+                        <input type="text" id="dataInput" value="10110010" placeholder="Enter binary data (e.g. 1010)">
+                        
+                        <div class="btn-group">
+                            <button id="simulateBtn"><i class="fas fa-play-circle"></i> Run Simulation</button>
+                            <button id="randomBtn"><i class="fas fa-random"></i> Random</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card-header">
+                    <i class="fas fa-chart-line"></i>
+                    <h2>Modulation Visualization</h2>
+                </div>
+                <div class="wave-container">
+                    <canvas id="waveformChart"></canvas>
+                </div>
+                
+                <div class="card-header">
+                    <i class="fas fa-layer-group"></i>
+                    <h2>Comparative Signal Analysis</h2>
+                </div>
+                
+                <div class="comparison-section">
+                    <div class="comparison-card">
+                        <h3><i class="fas fa-signal"></i> Digital vs Modulated</h3>
+                        <div class="signal-pair">
+                            <div class="signal-container">
+                                <div class="signal-label">Digital Signal</div>
+                                <canvas id="digitalCanvas"></canvas>
+                            </div>
+                            <div class="signal-container">
+                                <div class="signal-label">Modulated Signal</div>
+                                <canvas id="modulatedCanvas"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="comparison-card">
+                        <h3><i class="fas fa-wave-square"></i> Digital vs Carrier</h3>
+                        <div class="signal-pair">
+                            <div class="signal-container">
+                                <div class="signal-label">Digital Signal</div>
+                                <canvas id="digitalCanvas2"></canvas>
+                            </div>
+                            <div class="signal-container">
+                                <div class="signal-label">Carrier Signal</div>
+                                <canvas id="carrierCanvas"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="comparison-card">
+                        <h3><i class="fas fa-sync-alt"></i> Carrier vs Modulated</h3>
+                        <div class="signal-pair">
+                            <div class="signal-container">
+                                <div class="signal-label">Carrier Signal</div>
+                                <canvas id="carrierCanvas2"></canvas>
+                            </div>
+                            <div class="signal-container">
+                                <div class="signal-label">Modulated Signal</div>
+                                <canvas id="modulatedCanvas2"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="comparison-card">
+                        <h3><i class="fas fa-exchange-alt"></i> Modulated vs Unmodulated</h3>
+                        <div class="signal-pair">
+                            <div class="signal-container">
+                                <div class="signal-label">Modulated Signal</div>
+                                <canvas id="modulatedCanvas3"></canvas>
+                            </div>
+                            <div class="signal-container">
+                                <div class="signal-label">Unmodulated Carrier</div>
+                                <canvas id="unmodulatedCanvas"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-book"></i>
+                    <h2>Modulation Techniques</h2>
+                </div>
+                
+                <div class="modulation-types">
+                    <div class="mod-type">
+                        <h3><i class="fas fa-arrows-alt-v"></i> ASK/BASK</h3>
+                        <p><span class="highlight">Amplitude Shift Keying</span> represents digital data as variations in the amplitude of a carrier wave. Binary 1 is represented by a carrier wave at constant amplitude, and binary 0 by no carrier wave.</p>
+                        <div class="modulation-formula">
+                            s(t) = A(t) · cos(2πf<sub>c</sub>t)
+                        </div>
+                    </div>
+                    
+                    <div class="mod-type">
+                        <h3><i class="fas fa-wave-square"></i> FSK/BFSK</h3>
+                        <p><span class="highlight">Frequency Shift Keying</span> represents digital data as changes in the frequency of a carrier wave. Binary 1 is represented by one frequency, and binary 0 by a different frequency.</p>
+                        <div class="modulation-formula">
+                            s(t) = A · cos(2πf<sub>bit</sub>t)
+                        </div>
+                    </div>
+                    
+                    <div class="mod-type">
+                        <h3><i class="fas fa-sync-alt"></i> PSK/BPSK</h3>
+                        <p><span class="highlight">Phase Shift Keying</span> represents digital data as changes in the phase of a carrier wave. Binary digits are represented by shifting the phase of the carrier wave by 180 degrees.</p>
+                        <div class="modulation-formula">
+                            s(t) = A · cos(2πf<sub>c</sub>t + φ<sub>bit</sub>)
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="info-panel">
+                    <div class="info-box">
+                        <h3><i class="fas fa-info-circle"></i> About This Simulator</h3>
+                        <p>This enhanced simulator provides clear visualization of digital modulation techniques. The comparative signal views allow for detailed analysis of how digital signals modulate carrier waves.</p>
+                    </div>
+                    
+                    <div class="info-box">
+                        <h3><i class="fas fa-lightbulb"></i> Educational Value</h3>
+                        <p>By comparing signals through vertically stacked views, students can clearly see the relationship between digital inputs, carrier waves, and modulated outputs.</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+        
+        <footer>
+            <p>Enhanced Digital Modulation Simulator | ECE Education Tool | &copy; 2023</p>
+            <p>Designed for Electronics and Communication Engineering students</p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get DOM elements
+            const freqSlider = document.getElementById('frequency');
+            const ampSlider = document.getElementById('amplitude');
+            const bitrateSlider = document.getElementById('bitrate');
+            const freqDevSlider = document.getElementById('freqDev');
+            const modTypeSelect = document.getElementById('modType');
+            const dataInput = document.getElementById('dataInput');
+            const simulateBtn = document.getElementById('simulateBtn');
+            const randomBtn = document.getElementById('randomBtn');
+            
+            const freqValue = document.getElementById('freqValue');
+            const ampValue = document.getElementById('ampValue');
+            const bitrateValue = document.getElementById('bitrateValue');
+            const devValue = document.getElementById('devValue');
+            
+            // Initialize main waveform chart
+            const ctx = document.getElementById('waveformChart').getContext('2d');
+            let waveformChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [
+                        {
+                            label: 'Digital Signal',
+                            data: [],
+                            borderColor: '#76ff03',
+                            borderWidth: 3,
+                            pointRadius: 0,
+                            fill: false,
+                            yAxisID: 'y1'
+                        },
+                        {
+                            label: 'Modulated Signal',
+                            data: [],
+                            borderColor: '#4fc3f7',
+                            backgroundColor: 'rgba(79, 195, 247, 0.15)',
+                            borderWidth: 3,
+                            pointRadius: 0,
+                            fill: true,
+                            yAxisID: 'y'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Time (ms)',
+                                color: '#bbbbbb',
+                                font: {
+                                    size: 14,
+                                    weight: 'bold'
+                                }
+                            },
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.15)'
+                            },
+                            ticks: {
+                                color: '#bbbbbb',
+                                font: {
+                                    size: 12
+                                }
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Amplitude (V)',
+                                color: '#bbbbbb',
+                                font: {
+                                    size: 14,
+                                    weight: 'bold'
+                                }
+                            },
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.15)'
+                            },
+                            ticks: {
+                                color: '#bbbbbb',
+                                font: {
+                                    size: 12
+                                }
+                            },
+                            suggestedMin: -2.5,
+                            suggestedMax: 2.5,
+                            position: 'left'
+                        },
+                        y1: {
+                            position: 'right',
+                            suggestedMin: -0.2,
+                            suggestedMax: 1.2,
+                            grid: {
+                                drawOnChartArea: false
+                            },
+                            ticks: {
+                                color: '#76ff03',
+                                font: {
+                                    size: 12
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: '#e0e0e0',
+                                font: {
+                                    size: 15,
+                                    weight: 'bold'
+                                }
+                            }
+                        },
+                        title: {
+                            display: true,
+                            text: 'Modulation Waveform',
+                            color: '#ffffff',
+                            font: {
+                                size: 20,
+                                weight: 'bold'
+                            }
+                        }
+                    },
+                    animation: {
+                        duration: 400,
+                        easing: 'easeOutQuart'
+                    }
+                }
+            });
+            
+            // Initialize all signal canvases
+            const canvasIds = [
+                'digitalCanvas', 'modulatedCanvas',
+                'digitalCanvas2', 'carrierCanvas',
+                'carrierCanvas2', 'modulatedCanvas2',
+                'modulatedCanvas3', 'unmodulatedCanvas'
+            ];
+            
+            const canvasContexts = {};
+            
+            canvasIds.forEach(id => {
+                const canvas = document.getElementById(id);
+                canvas.width = canvas.offsetWidth;
+                canvas.height = canvas.offsetHeight;
+                canvasContexts[id] = canvas.getContext('2d');
+            });
+            
+            // Update slider value displays
+            freqSlider.addEventListener('input', function() {
+                freqValue.textContent = this.value + ' kHz';
+            });
+            
+            ampSlider.addEventListener('input', function() {
+                ampValue.textContent = this.value + ' V';
+            });
+            
+            bitrateSlider.addEventListener('input', function() {
+                bitrateValue.textContent = this.value + ' kbps';
+            });
+            
+            freqDevSlider.addEventListener('input', function() {
+                devValue.textContent = this.value + ' kHz';
+            });
+            
+            // Draw signal on canvas with enhanced visibility
+            function drawSignal(ctx, data, color, label) {
+                const width = ctx.canvas.width;
+                const height = ctx.canvas.height;
+                
+                ctx.clearRect(0, 0, width, height);
+                
+                // Draw grid with better visibility
+                ctx.beginPath();
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+                ctx.lineWidth = 1;
+                
+                // Horizontal lines
+                for (let i = 0; i <= 4; i++) {
+                    const y = i * height / 4;
+                    ctx.moveTo(0, y);
+                    ctx.lineTo(width, y);
+                }
+                
+                // Vertical lines
+                for (let i = 0; i <= 10; i++) {
+                    const x = i * width / 10;
+                    ctx.moveTo(x, 0);
+                    ctx.lineTo(x, height);
+                }
+                
+                ctx.stroke();
+                
+                // Draw center line
+                ctx.beginPath();
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
+                ctx.lineWidth = 1.5;
+                const centerY = height / 2;
+                ctx.moveTo(0, centerY);
+                ctx.lineTo(width, centerY);
+                ctx.stroke();
+                
+                // Draw signal with thicker line
+                ctx.beginPath();
+                ctx.strokeStyle = color;
+                ctx.lineWidth = 3;
+                ctx.lineJoin = 'round';
+                ctx.lineCap = 'round';
+                
+                for (let i = 0; i < data.length; i++) {
+                    const x = (i / (data.length - 1)) * width;
+                    const y = (1 - (data[i] + 1) / 2) * height;
+                    
+                    if (i === 0) {
+                        ctx.moveTo(x, y);
+                    } else {
+                        ctx.lineTo(x, y);
+                    }
+                }
+                
+                ctx.stroke();
+                
+                // Draw label with background
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+                ctx.fillRect(5, 5, ctx.measureText(label).width + 20, 30);
+                
+                ctx.fillStyle = color;
+                ctx.font = 'bold 14px Arial';
+                ctx.fillText(label, 15, 25);
+            }
+            
+            // Generate random binary data
+            function generateRandomBinary(length = 8) {
+                let binary = '';
+                for (let i = 0; i < length; i++) {
+                    binary += Math.random() > 0.5 ? '1' : '0';
+                }
+                return binary;
+            }
+            
+            // Generate waveform data
+            function generateWaveform() {
+                const freq = parseFloat(freqSlider.value);
+                const amplitude = parseFloat(ampSlider.value);
+                const bitrate = parseFloat(bitrateSlider.value);
+                const freqDev = parseFloat(freqDevSlider.value);
+                const modType = modTypeSelect.value;
+                let data = dataInput.value;
+                
+                // If data is empty, generate random binary
+                if (!data) {
+                    data = generateRandomBinary(8);
+                    dataInput.value = data;
+                }
+                
+                // Validate binary input
+                if (!/^[01]+$/.test(data)) {
+                    alert('Please enter valid binary data (only 0s and 1s)');
+                    return;
+                }
+                
+                // Generate time labels
+                const timeLabels = [];
+                const digitalData = [];
+                const carrierData = [];
+                const waveformData = [];
+                const unmodulatedData = [];
+                const samplesPerBit = 100; // Increased for smoother curves
+                const bitDuration = 1000 / bitrate; // ms per bit
+                
+                // Generate digital signal data
+                for (let bitIndex = 0; bitIndex < data.length; bitIndex++) {
+                    const bit = data[bitIndex];
+                    
+                    for (let sample = 0; sample < samplesPerBit; sample++) {
+                        const t = bitIndex * bitDuration + (sample / samplesPerBit) * bitDuration;
+                        timeLabels.push(t.toFixed(1));
+                        
+                        // Digital signal (square wave)
+                        digitalData.push(bit === '1' ? 1 : 0);
+                        
+                        // Carrier signal
+                        const carrierValue = amplitude * Math.sin(2 * Math.PI * freq * (t / 1000));
+                        carrierData.push(carrierValue);
+                        
+                        // Unmodulated signal
+                        unmodulatedData.push(carrierValue);
+                        
+                        // Modulated signal
+                        let modulatedValue = 0;
+                        
+                        switch(modType) {
+                            case 'ask':
+                            case 'bask':
+                                // ASK/BASK: Amplitude changes with bit value
+                                modulatedValue = (bit === '1') ? carrierValue : 0;
+                                break;
+                            case 'fsk':
+                            case 'bfsk':
+                                // FSK/BFSK: Frequency changes with bit value
+                                const effectiveFreq = (bit === '1') ? freq : freq + freqDev;
+                                modulatedValue = amplitude * Math.sin(2 * Math.PI * effectiveFreq * (t / 1000));
+                                break;
+                            case 'psk':
+                            case 'bpsk':
+                                // PSK/BPSK: Phase changes with bit value
+                                const phaseShift = (bit === '1') ? 0 : Math.PI;
+                                modulatedValue = amplitude * Math.sin(2 * Math.PI * freq * (t / 1000) + phaseShift);
+                                break;
+                        }
+                        
+                        waveformData.push(modulatedValue);
+                    }
+                }
+                
+                // Update main chart
+                waveformChart.data.labels = timeLabels;
+                waveformChart.data.datasets[0].data = digitalData;
+                waveformChart.data.datasets[1].data = waveformData;
+                
+                // Update chart title based on modulation type
+                let modTitle = '';
+                switch(modType) {
+                    case 'ask': modTitle = 'ASK Modulation'; break;
+                    case 'fsk': modTitle = 'FSK Modulation'; break;
+                    case 'psk': modTitle = 'PSK Modulation'; break;
+                    case 'bask': modTitle = 'BASK Modulation'; break;
+                    case 'bfsk': modTitle = 'BFSK Modulation'; break;
+                    case 'bpsk': modTitle = 'BPSK Modulation'; break;
+                }
+                
+                waveformChart.options.plugins.title.text = modTitle;
+                waveformChart.update();
+                
+                // Draw signals on comparative canvases
+                drawSignal(canvasContexts.digitalCanvas, digitalData, '#76ff03', 'Digital Signal');
+                drawSignal(canvasContexts.modulatedCanvas, waveformData, '#4fc3f7', 'Modulated Signal');
+                
+                drawSignal(canvasContexts.digitalCanvas2, digitalData, '#76ff03', 'Digital Signal');
+                drawSignal(canvasContexts.carrierCanvas, carrierData, '#ff9800', 'Carrier Signal');
+                
+                drawSignal(canvasContexts.carrierCanvas2, carrierData, '#ff9800', 'Carrier Signal');
+                drawSignal(canvasContexts.modulatedCanvas2, waveformData, '#4fc3f7', 'Modulated Signal');
+                
+                drawSignal(canvasContexts.modulatedCanvas3, waveformData, '#4fc3f7', 'Modulated Signal');
+                drawSignal(canvasContexts.unmodulatedCanvas, unmodulatedData, '#bb86fc', 'Unmodulated Carrier');
+            }
+            
+            // Initialize with default waveform
+            generateWaveform();
+            
+            // Set up event listeners
+            simulateBtn.addEventListener('click', generateWaveform);
+            freqSlider.addEventListener('change', generateWaveform);
+            ampSlider.addEventListener('change', generateWaveform);
+            bitrateSlider.addEventListener('change', generateWaveform);
+            freqDevSlider.addEventListener('change', generateWaveform);
+            modTypeSelect.addEventListener('change', generateWaveform);
+            dataInput.addEventListener('change', generateWaveform);
+            
+            // Random binary button
+            randomBtn.addEventListener('click', function() {
+                dataInput.value = generateRandomBinary(8);
+                generateWaveform();
+            });
+            
+            // Resize canvases when window resizes
+            window.addEventListener('resize', function() {
+                canvasIds.forEach(id => {
+                    const canvas = document.getElementById(id);
+                    canvas.width = canvas.offsetWidth;
+                    canvas.height = canvas.offsetHeight;
+                });
+                
+                // Resize main chart
+                waveformChart.resize();
+                
+                generateWaveform();
+            });
+        });
+    </script>
+</body>
+</html>
